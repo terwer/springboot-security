@@ -31,4 +31,8 @@ public class Constants {
      * 退出登录地址
      */
     public static final String logoutUrl = "/" + Constants.adminPrefix + "/logout";
+    /**
+     * 验证错误地址
+     */
+    public static final String failureUrl = "/" + Constants.adminPrefix + "/error";
 }
