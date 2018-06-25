@@ -1,6 +1,5 @@
 package com.terwergreen.springbootsecurity.controller.admin;
 
-import com.terwergreen.springbootsecurity.util.Constants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -11,16 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Description TODO
  **/
 @Controller
-@RequestMapping(Constants.adminPrefix)
+@RequestMapping("admin")
 public class AdminController {
-
-    @RequestMapping("register")
+    @RequestMapping("workspace")
     public String register() {
-        return "register";
+        return "workspace/workspace_index";
     }
 
-    @RequestMapping("login")
-    public String login() {
-        return "login";
+    @RequestMapping("user")
+    public String userIndex() {
+        return "user/user_index";
     }
 }

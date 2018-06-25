@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.terwergreen.springbootsecurity.controller.home;
+package com.terwergreen.springbootsecurity.controller.admin;
 
-import com.terwergreen.springbootsecurity.common.dto.RestResponseDTO;
-import com.terwergreen.springbootsecurity.common.dto.RestResponseStates;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @Author Terwer
- * @Date 2018/6/22 16:19
+ * @Date 2018/6/25 15:07
  * @Version 1.0
  * @Description TODO
  **/
 @Controller
-@RequestMapping("/")
-public class HomePageController {
-    @RequestMapping("/")
-    public String home(Model model) {
-        RestResponseDTO restResponseDTO = new RestResponseDTO(RestResponseStates.SUCCESS.getValue(), RestResponseStates.SUCCESS.getMsg(), "操作成功");
-        model.addAttribute("msg", restResponseDTO);
-        return "themes/default/index";
+@RequestMapping("auth")
+public class AuthController {
+
+    @RequestMapping("register")
+    public String register() {
+        return "register";
+    }
+
+    @RequestMapping("login")
+    public String login() {
+        return "login";
     }
 }

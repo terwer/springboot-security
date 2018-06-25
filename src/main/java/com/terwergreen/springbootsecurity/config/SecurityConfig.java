@@ -1,15 +1,26 @@
+/*
+ * Copyright 2002-2016 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.terwergreen.springbootsecurity.config;
 
-import com.terwergreen.springbootsecurity.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,14 +32,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @Version 1.0
  * @Description TODO
  **/
-@Configuration
-@EnableWebSecurity(debug = true)
-@EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfig {
-    private Log logger = LogFactory.getLog(this.getClass());
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    DataSource dataSource;
+    private Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -38,62 +45,30 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // @formatter:off
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .and()
+                .formLogin()
+                .loginPage("/auth/login")
+                .failureUrl("/auth/login?error");
+    }
+    // @formatter:on
+
+    // @formatter:off
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         //内存中缓存权限数据
-        auth.inMemoryAuthentication().withUser("root").password(passwordEncoder.encode("123456")).roles("USER");
+        auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder.encode("123456")).roles("ADMIN");
         String encodePassword = passwordEncoder.encode("123456");
         logger.info("encodePassword:" + encodePassword);
-        //auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(passwordEncoder);
 //        auth.userDetailsService(detailsService()).passwordEncoder(passwordEncoder());
     }
-
-    @Configuration
-    public static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-        @Override
-        public void configure(WebSecurity web) throws Exception {
-            web.ignoring().antMatchers("/error",
-                    "/webjars/**",
-                    "/favicon.ico",
-                    Constants.adminUrlPattern,
-                    "/index.html"
-            );
-            super.configure(web);
-        }
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .antMatchers(Constants.adminUrlPattern, Constants.apiUrlPattern)
-                    .authenticated()
-                    .and()
-                    .exceptionHandling()
-//                    .authenticationEntryPoint(authenticationEntryPoint())
-                    .and().httpBasic()
-                    .and()
-                    .formLogin()
-//                    .loginPage(Constants.loginPage)
-//                    .loginProcessingUrl(Constants.loginProcessingUrl)
-                    .defaultSuccessUrl("/index.html", true)
-                    .failureUrl(Constants.failureUrl)
-                    .permitAll()
-//                    .successHandler(loginSuccessHandler)
-//                    .failureHandler(ajaxSimpleUrlAuthenticationFailureHandler)
-                    .and()
-                    .logout()
-//                    .logoutUrl(Constants.logoutUrl)
-                    .permitAll()
-//                    .logoutSuccessHandler(logoutSuccessHandler())
-                    .and()
-                    .rememberMe()
-//                    .tokenRepository(persistentTokenRepository())
-                    .tokenValiditySeconds(1209600)
-                    .and()
-                    .csrf()
-                    .disable();
-            super.configure(http);
-        }
-    }
+    // @formatter:on
 }
+
 

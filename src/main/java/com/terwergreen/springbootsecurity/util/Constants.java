@@ -30,9 +30,9 @@ public class Constants {
     /**
      * 退出登录地址
      */
-    public static final String logoutUrl = "/" + Constants.adminPrefix + "/logout";
+    public static final String logoutUrl = "/" + Constants.adminPrefix + "/login?logout";
     /**
      * 验证错误地址
      */
-    public static final String failureUrl = "/" + Constants.adminPrefix + "/error";
+    public static final String failureUrl = "/" + Constants.adminPrefix + "/login?error";
 }
